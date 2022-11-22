@@ -67,7 +67,7 @@ ggplot(va_trumpvote_byurbanrural, aes(x = reorder(rural_urban, mean_vote_percent
   scale_x_discrete(name = "Type of County") +
   labs(title = "Trump Percent of the Vote in Virginia ", 
        subtitle = "Average in Urban/Suburban/Rural Counties") +
-  theme_minimal()
+  theme_minimal() #
 
 ```
 
