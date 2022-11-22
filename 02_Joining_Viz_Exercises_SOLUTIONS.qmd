@@ -43,6 +43,7 @@ joined_counties <- inner_join(counties_elexresults, counties_rural_urban_suburba
 
 joined_counties_virginia <- joined_counties %>% 
   filter(state_code == "VA")
+###asdfasdfsadf
 
 ```
 
