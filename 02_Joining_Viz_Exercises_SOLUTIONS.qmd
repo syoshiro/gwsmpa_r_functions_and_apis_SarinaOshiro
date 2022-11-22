@@ -1,0 +1,91 @@
+---
+title: "Joining Review Exercises"
+author: "Your Name Here"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+format:
+  html:
+    self-contained: true
+    toc: true
+    toc-location: left
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(here)
+
+```
+
+
+# Load the datasets
+
+```{r}
+
+counties_demographics <- readRDS(here("data", "counties_demographics.rds"))
+counties_elexresults <- readRDS(here("data", "counties_elexresults.rds"))
+counties_rural_urban_suburban <- readRDS(here("data", "counties_rural_urban_suburban.rds"))
+
+
+
+```
+
+# Exercises
+
+Join together the election results and urban/suburban/rural tables above, and then use the merged table to:
+
+-   filter for just Virginia
+
+-   group/summarize to calculate the mean pct of Trump 2020 vote by urban/rural categories
+
+```{r}
+joined_counties <- inner_join(counties_elexresults, counties_rural_urban_suburban, by = "geoid")
+
+joined_counties_virginia <- joined_counties %>% 
+  filter(state_code == "VA")
+
+```
+
+```{r}
+va_trumpvote_byurbanrural <- joined_counties_virginia %>% 
+  group_by(rural_urban) %>% 
+  summarise(mean_vote_percentage = mean(pct_r_2020))
+
+va_trumpvote_byurbanrural
+
+```
+
+Take the grouped dataset, and create a column chart using ggplot to display it
+
+```{r}
+
+ggplot(va_trumpvote_byurbanrural, aes(x = reorder(rural_urban, mean_vote_percentage), y = mean_vote_percentage)) + 
+  geom_col(fill = "darkred") +
+  coord_flip() +
+  scale_y_continuous(name = "Avg Pct of Vote", labels = scales::comma) +
+  scale_x_discrete(name = "Type of County") +
+  labs(title = "Trump Percent of the Vote in Virginia ", 
+       subtitle = "Average in Urban/Suburban/Rural Counties") +
+  theme_minimal()
+
+```
+
+Now using the joined dataset, come up with two groupings you find interesting or newsworthy in a particular state, and replicate the steps above them them instead.
+
+(i.e. instead of for urban/rural, perhaps you want to look at pct of white college grads in Michigan, etc. If you're having trouble, you can stick with Virginia as your state.)
+
+```{r}
+
+
+
+
+```
+
+
+```{r}
+
+
+
+
+
+```
