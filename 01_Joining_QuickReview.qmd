@@ -20,7 +20,7 @@ library(here)
 ```{r}
 
 superheroes <- readRDS(here("data","superheroes.rds"))
-publishers <- readRDS(here("data","publishers.rds"))
+publishers <- readRDS(here("data","publishers.rds")) 
 
 ```
 
