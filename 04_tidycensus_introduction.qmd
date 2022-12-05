@@ -16,6 +16,7 @@ library(tidycensus)
 library(janitor)
 library(writexl)
 library(jsonlite)
+library(here)
 options(tigris_class = "sf")
 
 
@@ -47,13 +48,13 @@ All Census API documentation: https://api.census.gov/data.html
 
 Let's do it for real, with a real API call. We'll ask for median income by state:
 
-*https://api.census.gov/data/2020/acs/acs5?get=NAME,B19013_001E&for=state:\*&key=2a6f8c21a30d3024e038d67d7d4eba647dc79cd4*
+https://api.census.gov/data/2020/acs/acs5?get=NAME,B19013_001E&for=state:\*&key=2a6f8c21a30d3024e038d67d7d4eba647dc79cd4
 
 We can copy and paste this directly into a web browser and see if it works. Does it work?
 
 Now let's ask for median income county, for Virginia:
 
-*https://api.census.gov/data/2020/acs/acs5/subject?get=NAME,S0101_C01_001E&for=county:\*&in=state:51&key=2a6f8c21a30d3024e038d67d7d4eba647dc79cd4*
+https://api.census.gov/data/2020/acs/acs5/subject?get=NAME,S0101_C01_001E&for=county:*&in=state:51&key=2a6f8c21a30d3024e038d67d7d4eba647dc79cd4
 
 We can try to convert this output into a table using the jsonlite package directly in R:
 
@@ -87,7 +88,7 @@ First step to using it is loading your API Key credential. You thankfully only h
 
 # uncomment to run, then recomment it out so you don't run it every time
 
-# census_api_key("APIKEYCODE", install=TRUE)
+# census_api_key("", install=TRUE)
 
 
 ```
@@ -157,14 +158,17 @@ get_acs(geography = "county",
 medage  <- "B01002_001"
 
 #run it again for both income and age
-get_acs(geography = "county", variables = c(medincome, medage),
+get_acs(geography = "county", 
+        variables = c(medincome, medage),
         state = "VA")
 ```
 
 ```{r}
 #now we can see why wide is different
-get_acs(geography = "county", variables = c(medincome, medage),
-        state = "VA", output = "wide")
+get_acs(geography = "county", 
+        variables = c(medincome, medage),
+        state = "VA", 
+        output = "wide")
 ```
 
 ```{r}
