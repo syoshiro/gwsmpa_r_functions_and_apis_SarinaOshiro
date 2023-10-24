@@ -26,8 +26,10 @@ All functions have the same structure:
 
 `}`
 
+Let's see a basic example of this:
+
 ```{r}
-# let's see a basic example of this:
+
 
 cube_me <- function(mynumber){
   
@@ -37,16 +39,46 @@ cube_me <- function(mynumber){
 }
 ```
 
+Now we'll run the function:
+
 ```{r}
 
 cube_me(5)
 
 ```
 
+When doing these things, try to first figure out the thing you're trying to solve. 
+And then, turn it into a function.  
+ 
+For example, what if we want to say a sports team stinks.
+
+```{r}
+
+stinker_phrase <- "The Cowboys stink!"
+
+stinker_phrase
+
+```
+Now let's say we want to separate out the name of the team into its own
+variable so we can change it.
+
+```{r}
+
+teamname <- "Cowboys"
+
+stinker_phrase <- paste0("The ", teamname, " stink!")
+
+stinker_phrase
+
+#Change the team name above and re-run, see what happens.
+```
+
+Now we can make this into a function.
+
 ```{r}
 # let's try another
 
-otherteam_function <- function(teamname){
+stinkerteam_function <- function(teamname){
   
   result <- paste0("The ", teamname, " stink!")
   
@@ -55,11 +87,14 @@ otherteam_function <- function(teamname){
 ```
 
 ```{r}
-otherteam_function("Cowboys")
+stinkerteam_function("Cowboys")
+
+stinkerteam_function("Jets")
 ```
 
+Now let's try a function with TWO arguments instead of one
 ```{r}
-# now we'll try with TWO arguments instead of one
+
 twoteam_function <- function(myteam, otherteam){
   
   result <- paste0("The ", myteam, " are going to wipe the floor with the ", otherteam)
@@ -75,13 +110,14 @@ twoteam_function("Eagles", "Cowboys")
 
 ```
 
+Finnaly, we can we automate by feeding of list of multiple teams
 ```{r}
 
-#Now can we automate feeding of list of teams - in this case vectors
 myteams_vector <- c("Eagles", "Phillies", "Flyers")
 
 otherteams_vector <- c("Cowboys", "Astros", "Stars")
 
+#run function
 twoteam_function(myteams_vector, otherteams_vector)
 
 
