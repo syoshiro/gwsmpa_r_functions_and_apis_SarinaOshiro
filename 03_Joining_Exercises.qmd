@@ -39,35 +39,17 @@ Join together the election results and urban/suburban/rural tables above, and th
 -   group/summarize to calculate the mean pct of Trump 2020 vote by urban/rural categories
 
 ```{r}
-joined_counties <- inner_join(counties_elexresults, counties_rural_urban_suburban, by = "geoid")
 
-joined_counties_virginia <- joined_counties %>% 
-  filter(state_code == "VA")
-###asdfasdfsadf
+
+
 
 ```
 
 ```{r}
-va_trumpvote_byurbanrural <- joined_counties_virginia %>% 
-  group_by(rural_urban) %>% 
-  summarise(mean_vote_percentage = mean(pct_r_2020))
 
-va_trumpvote_byurbanrural
 
-```
 
-Take the grouped dataset, and create a column chart using ggplot to display it
 
-```{r}
-
-ggplot(va_trumpvote_byurbanrural, aes(x = reorder(rural_urban, mean_vote_percentage), y = mean_vote_percentage)) + 
-  geom_col(fill = "darkred") +
-  coord_flip() +
-  scale_y_continuous(name = "Avg Pct of Vote", labels = scales::comma) +
-  scale_x_discrete(name = "Type of County") +
-  labs(title = "Trump Percent of the Vote in Virginia ", 
-       subtitle = "Average in Urban/Suburban/Rural Counties") +
-  theme_minimal() #
 
 ```
 

@@ -1,5 +1,5 @@
 ---
-title: "Intro to the Census API and Tidycensus"
+title: "Intro to Web Scraping - Tables and Compilations"
 author: "Aaron Kessler"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 format:
