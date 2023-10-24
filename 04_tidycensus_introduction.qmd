@@ -328,8 +328,9 @@ allcounties_wide <- allcounties_wide %>%
 
 
 ```{r}
-# save results for next steps
+# save results 
 saveRDS(allcounties_wide, here("data", "allcounties_wide_demographics.rds"))
+write_xlsx(allcounties_wide, here("data", "allcounties_wide_demographics.xlsx"))
 
 
 ```
