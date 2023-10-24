@@ -1,6 +1,6 @@
 ---
 title: "Joining Review Exercises"
-author: "Your Name Here"
+author: "Sarina Oshiro, Madison Paulus, Jenna Shahid"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 format:
   html:
