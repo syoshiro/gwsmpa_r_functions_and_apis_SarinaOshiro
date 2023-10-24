@@ -40,14 +40,19 @@ Join together the election results and urban/suburban/rural tables above, and th
 
 ```{r}
 
-
-
+counties_election_combined <- inner_join(counties_elexresults, counties_rural_urban_suburban, by = "geoid")
 
 ```
 
 ```{r}
 
 
+counties_election_combined %>% 
+  filter(state_code == "VA") %>% 
+  group_by(rural_urban) %>% 
+  summarise(n(),
+            mean_pct = mean(pct_r_2020)) %>% 
+  View()
 
 
 
@@ -57,17 +62,29 @@ Now using the joined dataset, come up with two groupings you find interesting or
 
 (i.e. instead of for urban/rural, perhaps you want to look at pct of white college grads in Michigan, etc. If you're having trouble, you can stick with Virginia as your state.)
 
+##NOTE: We wanted to look at the percent of votes for Trump in 2016 in Virginia, so as to compare the data to Trump 2020 percentages (which we calculated above)
 ```{r}
 
-
+counties_election_combined %>% 
+  filter(state_code == "VA") %>% 
+  group_by(rural_urban) %>% 
+  summarise(n(),
+            mean_pct = mean(pct_r_2016)) %>% 
+  View()
 
 
 ```
 
+##NOTE: We wanted to look at the percent of votes for Hillary Clinton in the state of Alabama in 2020
 
 ```{r}
 
-
+counties_election_combined %>% 
+  filter(state_code == "AL") %>% 
+  group_by(rural_urban) %>% 
+  summarise(n(),
+            mean_pct = mean(pct_d_2020)) %>% 
+  View()
 
 
 
