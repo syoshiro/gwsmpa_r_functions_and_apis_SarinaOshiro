@@ -1,0 +1,239 @@
+---
+title: "Intro to the Census API and Tidycensus"
+author: "Aaron Kessler"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+format:
+  html:
+    self-contained: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(lubridate)
+library(janitor)
+library(here)
+library(rvest)
+library(writexl)
+library(furrr)
+
+# Database location:
+# https://www.ilo.org/dyn/seafarers/seafarersbrowse.home
+
+# An example details page:
+# https://www.ilo.org/dyn/seafarers/seafarersbrowse.details?p_lang=en&p_abandonment_id=724&p_search_id=231005192825
+
+
+```
+
+
+```{r}
+# FIRST, LET'S SOLVE FOR ONE SINGLE PAGE ####
+
+## scraping the data ####
+```
+
+
+```{r}
+# set the url of the page to scrape
+incident_url <- "https://www.ilo.org/dyn/seafarers/seafarersbrowse.details?p_lang=en&p_abandonment_id=724&p_search_id=231005192825"
+
+incident_url
+```
+
+
+```{r}
+# read in the html
+results <- incident_url %>%
+  read_html()
+
+# display the html below
+results
+```
+
+
+```{r}
+# Read in all html from tables, store all tables on page as nested list of dataframes.
+results <- incident_url %>%
+  read_html() %>%
+  html_table()
+
+# show the list
+results
+```
+
+
+```{r}
+# identify and select just the item in the list with the data we want
+results[[8]]
+```
+
+
+```{r}
+# save as new object, which is now dataframe alone not list
+results_df <- results[[8]]
+
+# show the dataframe
+results_df
+```
+
+
+```{r}
+## processing/reshaping the data ####
+
+# great, now that we have our table, let's clean it up and reformat it
+
+# remove any blank rows
+results_df <- results_df %>%
+  filter(X1 != "")
+
+results_df
+```
+
+
+```{r}
+# reshape to wide format, so our first column values becomes the table's column names
+# we'll then clean up the newly formed column names for ease of use
+results_df_wide <- results_df %>%
+  pivot_wider(names_from = X1, values_from = X2) %>%
+  clean_names()
+```
+
+
+```{r}
+# check if it worked
+results_df_wide
+
+glimpse(results_df_wide)
+```
+
+
+```{r}
+## Create FUNCTION to accomplish the above ####
+
+# let's turn the above workflow into a function, to get ready for tackling the entire dataset
+
+scrape_seafarer_table <- function(target_url) {
+  # read in the html
+  results <- target_url %>%
+    read_html()
+  # read in all html from tables as list
+  results <- target_url %>%
+    read_html() %>%
+    html_table()
+  # identify and select just the item in the list with the data we want
+  # save as new object, which is now dataframe alone not list
+  results_df <- results[[8]]
+  # remove any blank rows
+  results_df <- results_df %>%
+    filter(X1 != "")
+  # reshape to wide format, so our first column values becomes the table's column names
+  results_df_wide <- results_df %>%
+    pivot_wider(names_from = X1, values_from = X2) %>%
+    clean_names()
+  # build in brief pause to not hit the website too rapidly
+  Sys.sleep(0.2)
+  return(results_df_wide)
+
+}
+```
+
+
+```{r}
+# now let's apply the function to a url to test it out
+# take the url designated earlier:
+incident_url
+```
+
+
+```{r}
+# run the function on it:
+scrape_seafarer_table(incident_url)
+
+# it works, woohoo!
+```
+
+
+```{r}
+######################
+
+
+# SOLVE FOR ALL PAGES ####
+
+# now that we have our function let's aim to apply it to every single page
+# and build out the whole thing into a combined dataset
+
+## Identify the universe of URLs ####
+
+# we'll aim to capture all of the links on the summary list of cases page here,
+# as each link takes us to one of the detailed pages we've now figured out how to scrape:
+# https://www.ilo.org/dyn/seafarers/seafarersBrowse.list?p_lang=en
+
+
+# read the webpage and get the html
+summary_webpage <- read_html("https://www.ilo.org/dyn/seafarers/seafarersBrowse.list?p_lang=en")
+
+summary_webpage
+```
+
+
+```{r}
+# isolate just the links
+summary_webpage_links <- summary_webpage %>%
+  html_nodes("a") %>%
+  html_attr("href") %>%
+  #add back on root url:
+  paste0("https://www.ilo.org/dyn/seafarers/", .)
+
+summary_webpage_links
+```
+
+
+```{r}
+#remove any that aren't detail pages
+#we'll convert to dataframe to make this easier, then convert back to vector
+summary_webpage_links <- summary_webpage_links %>%
+  as_tibble() %>%
+  filter(str_detect(value, "seafarersbrowse.details?")) %>%
+  head(10) %>% # *enable just sample set for testing*
+  pull(value)
+
+summary_webpage_links
+```
+
+
+```{r}
+#bingo. now we're ready to run the function on everything.
+
+
+## Run function on EVERYTHING for combined dataframe ####
+
+# we'll use furrr package to loop through all the webpages, scrape, and pull into table
+# with the benefit of using parallel processing.
+
+# set furrr to handle use multiple sessions
+plan(multisession)
+```
+
+
+```{r}
+# run loop
+# NOTE: This will still take a long time when done for all 769. Use sample set of URLs for testing/iterating
+scraped_data_all_RAW <- future_map_dfr(summary_webpage_links, scrape_seafarer_table)
+```
+
+
+```{r}
+# save results
+saveRDS(scraped_data_all_RAW, "data/scraped_data_all_RAW.rds")
+write_xlsx(scraped_data_all_RAW, "data/scraped_data_all_RAW.xlsx")
+
+
+
+
+
+
+
+```
+
