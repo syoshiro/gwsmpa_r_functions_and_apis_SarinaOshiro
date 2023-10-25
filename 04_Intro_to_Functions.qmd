@@ -90,7 +90,20 @@ stinkerteam_function <- function(teamname){
 stinkerteam_function("Cowboys")
 
 stinkerteam_function("Jets")
+
+stinkerteam_function("Suns")
+
 ```
+
+
+```{r}
+
+stinkerfunction <- function() {
+  stinkerteam_function("Cowboys")
+}
+
+```
+
 
 Now let's try a function with TWO arguments instead of one
 ```{r}

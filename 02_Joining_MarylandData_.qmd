@@ -49,7 +49,11 @@ All three of these datasets have the same number of columns, all with the same n
 Since we have three dataframes, we're going to need to pass them as a list, meaning they'll be enclosed inside the `list` function.
 
 ```{r}
-county_voters_combined <- bind_rows(list(county_voters_2016, county_voters_2018, county_voters_2020))
+county_voters_combined <- bind_rows(
+  county_voters_2016,
+  county_voters_2018,
+  county_voters_2020)
+  
 ```
 
 And boom, like that, we have 75 rows of data together instead of three dataframes. There are plenty of uses for `bind_rows`: any regularly updated data that comes in the same format like crime reports or award recipients or player game statistics. Or election results.
@@ -94,6 +98,11 @@ Remove the nrow and run it again for yourself. By default, `dplyr` will do a "na
 ```{r}
 maryland_population %>% 
   left_join(county_voters_2020)
+
+maryland_population_with_voters %>% 
+  mutate(
+    dem_pct = 
+  )
 ```
 
 Since we only have one column in common between the two tables, the join only used that column. And we got the same answer. If we had more columns in common, you could see in your results columns with .X after them - that's a sign of duplicative columns between two tables, and you may decide you don't need both moving forward.
